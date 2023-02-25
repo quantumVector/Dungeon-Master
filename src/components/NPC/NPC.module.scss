@@ -1,0 +1,10 @@
+.NPC {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    background-image: url(../../assets/nimp.webp);
+    background-size: cover;
+    background-repeat: no-repeat;
+    z-index: 2;
+    transition: all 0.3s ease-out;
+}
