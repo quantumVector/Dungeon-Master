@@ -150,7 +150,10 @@ const AStar = (cells: any, endPoint: any, startPoint: any) => {
                 checkPoint(-1, 1);
             } else {
                 clearInterval(timer);
-                printAStar();
+                const returned = printAStar();
+                if (returned) {
+                    resolve('Path not found');
+                }
                 resolve(finalPath);
             }
         }, delay);
@@ -160,7 +163,7 @@ const AStar = (cells: any, endPoint: any, startPoint: any) => {
         if (targetPointNotInOpenList()) {
             console.log('Path not found');
 
-            return;
+            return 'kek';
         }
         let parent = targetPoint.getParent();
 

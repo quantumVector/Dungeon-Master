@@ -114,30 +114,46 @@ const Cell = ({ id, cellSize, coordX, coordY, type, status }: CellSizeProps) => 
         if (unit && type === 'wall' && coordX && coordY) {
             // определяем самый короткий путь к нужной позиции
             AStar(cells, { x: coordX, y: coordY }, { x: unit.x, y: unit.y }).then((result: any) => {
+                if (result === 'Path not found') {
+                    return;
+                }
                 if (result && result.length > 0) {
                     dispatch(setDirectionMovement({ id: 'nimp-1', direction: result }));
-                    // ставим выделение на клетку, которую юнит будет копать
+                }
+
+                // ставим выделение на клетку, которую юнит будет копать
+                dispatch(
+                    setStatus({
+                        x: coordX,
+                        y: coordY,
+                        id,
+                        type,
+                        status: 'digging',
+                    }),
+                );
+                // ставим триггер на клетку, которая находитя перед выделенной клеткой
+                // чтобы потом активировать мерцание
+                dispatch(
+                    setTrigger({
+                        id: result.length > 0 ? result[0].id : id,
+                        x: coordX,
+                        y: coordY,
+                    }),
+                );
+                // запоминаем клетку с триггером в текущем компоненте,
+                // чтобы потом удалить триггер
+                setCellWithTrigger(result.length > 0 ? result[0].id : id);
+
+                // если клетка находится рядом с юнитом, то он не будет двигаться с места
+                // значит сразу вешаем мерцание на клетку, которую нужно раскопать
+                if (!result.length) {
                     dispatch(
-                        setStatus({
+                        setDiggingActive({
                             x: coordX,
                             y: coordY,
-                            id,
-                            type,
-                            status: 'digging',
+                            digging: true,
                         }),
                     );
-                    // ставим триггер на клетку, которая находитя перед выделенной клеткой
-                    // чтобы потом активировать мерцание
-                    dispatch(
-                        setTrigger({
-                            id: result[0].id,
-                            x: coordX,
-                            y: coordY,
-                        }),
-                    );
-                    // запоминаем клетку с триггером в текущем компоненте,
-                    // чтобы потом удалить триггер
-                    setCellWithTrigger(result[0].id);
                 }
             });
         }
