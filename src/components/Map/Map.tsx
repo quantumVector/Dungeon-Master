@@ -19,6 +19,7 @@ const Map = () => {
                     coordX={cell.x}
                     coordY={cell.y}
                     type={cell.type}
+                    status={cell.status}
                     layer="env"
                 />
             ))}

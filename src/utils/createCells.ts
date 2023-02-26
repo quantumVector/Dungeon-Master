@@ -20,6 +20,7 @@ export const createCells = () => {
             x: coordX,
             y: coordY,
             type: 'wall',
+            status: '',
         });
     }
 

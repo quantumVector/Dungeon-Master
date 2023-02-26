@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
+import { setDiggingActive } from '../../store/cellsSlice';
 import { setStartPosition } from '../../store/NPCSlice';
 import styles from './NPC.module.scss';
 
@@ -15,9 +16,11 @@ const NPC = ({ id, x, y }: NPCProps) => {
     const startCell = useAppSelector((state) =>
         // eslint-disable-next-line prettier/prettier
         state.cells.cells.find((cell) => cell.x === x && cell.y === y));
+    const cells = useAppSelector((state) => state.cells.cells);
     const unit = useAppSelector((state) => state.NPC.NPC.find((npc) => npc.id === id));
     const [position, setPosition] = useState<any>();
 
+    // юнит начинает движение
     useEffect(() => {
         if (unit && unit.directionMovement.length > 0) {
             const arr = unit.directionMovement[0].slice().reverse();
@@ -30,6 +33,7 @@ const NPC = ({ id, x, y }: NPCProps) => {
 
                 i++;
 
+                // действия в конце движения
                 if (i === arr.length) {
                     clearInterval(timer);
                     dispatch(
@@ -42,6 +46,21 @@ const NPC = ({ id, x, y }: NPCProps) => {
                             status: '',
                         }),
                     );
+
+                    // в последней клетке пройденного пути должен быть триггер, находим его
+                    const diggingCell = cells.find((cell) => cell.id === arr[arr.length - 1].id);
+
+                    // из триггера достаем координаты клетки, которую нужно раскопать
+                    // чтобы повесить на нее мерцание
+                    if (diggingCell?.diggingTrigger) {
+                        dispatch(
+                            setDiggingActive({
+                                x: diggingCell.diggingTrigger.x,
+                                y: diggingCell.diggingTrigger.y,
+                                digging: true,
+                            }),
+                        );
+                    }
                 }
             }, 200);
         }

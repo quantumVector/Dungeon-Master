@@ -15,7 +15,7 @@ export const cellsSlice = createSlice({
         setCells: (state, action: PayloadAction<Cell[]>) => {
             state.cells = action.payload;
         },
-        setType: (state, action: PayloadAction<Cell>) => {
+        setType: (state, action: PayloadAction<Type>) => {
             const editableCell = state.cells.find(
                 (cell) => cell.x === action.payload.x && cell.y === action.payload.y,
             );
@@ -34,6 +34,35 @@ export const cellsSlice = createSlice({
                 editableCell.right = action.payload.right;
             }
         },
+        setStatus: (state, action: PayloadAction<Cell>) => {
+            const editableCell = state.cells.find(
+                (cell) => cell.x === action.payload.x && cell.y === action.payload.y,
+            );
+
+            if (editableCell) {
+                editableCell.status = action.payload.status;
+            }
+        },
+        setTrigger: (state, action: PayloadAction<Trigger>) => {
+            const editableCell = state.cells.find((cell) => cell.id === action.payload.id);
+
+            if (editableCell) {
+                if (action.payload.x && action.payload.y) {
+                    editableCell.diggingTrigger = action.payload;
+                } else {
+                    editableCell.diggingTrigger = null;
+                }
+            }
+        },
+        setDiggingActive: (state, action: PayloadAction<Digging>) => {
+            const editableCell = state.cells.find(
+                (cell) => cell.x === action.payload.x && cell.y === action.payload.y,
+            );
+
+            if (editableCell) {
+                editableCell.digging = action.payload.digging;
+            }
+        },
     },
 });
 
@@ -46,6 +75,17 @@ export type Cell = {
     bottom?: number;
     right?: number;
     type: string;
+    status: string;
+    digging?: boolean;
+    // тут пишем, какая клетка будет копаться, когда юнит достигнет текущей клетки
+    // на которой кстановлен триггер
+    diggingTrigger?: Trigger | null;
+};
+
+type Type = {
+    x: number;
+    y: number;
+    type: string;
 };
 
 type Coords = {
@@ -56,6 +96,19 @@ type Coords = {
     right: number;
 };
 
-export const { setCells, setType, setCoords } = cellsSlice.actions;
+type Trigger = {
+    id: string;
+    x: number;
+    y: number;
+};
+
+type Digging = {
+    x: number;
+    y: number;
+    digging: boolean;
+};
+
+export const { setCells, setType, setCoords, setStatus, setTrigger, setDiggingActive } =
+    cellsSlice.actions;
 
 export default cellsSlice.reducer;

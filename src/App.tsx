@@ -19,7 +19,6 @@ function App() {
         gameConfig.baseCoord.forEach((coord) => {
             dispatch(
                 setType({
-                    id: new Date().toISOString(),
                     x: coord.x,
                     y: coord.y,
                     type: 'open',
@@ -28,7 +27,6 @@ function App() {
         });
         dispatch(
             setType({
-                id: new Date().toISOString(),
                 x: gameConfig.baseCenter.x,
                 y: gameConfig.baseCenter.y,
                 type: 'base-center',
